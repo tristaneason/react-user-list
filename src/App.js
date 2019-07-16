@@ -1,26 +1,68 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { Component } from 'react';
+import axios from 'axios';
+import Card from './Card';
+import { requestOptions } from './services';
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+
+class App extends Component {
+    constructor() {
+        super();
+        this.state = {
+            results: []
+        }
+    }
+
+    getUsers() {
+        axios(requestOptions)
+            .then(response => {
+                console.log(response.data.results);
+                this.setState({ results: response.data.results });
+                console.log(this.state);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+
+    sortAscend() {
+        this.setState({
+            results: this.state.results.sort((a, b) => (a.name.last > b.name.last) ? 1 : ((b.name.last > a.name.last) ? -1 : 0))
+        });
+    }
+
+    sortDescend() {
+        this.setState({
+            results: this.state.results.sort((a, b) => (a.name.last < b.name.last) ? 1 : ((b.name.last < a.name.last) ? -1 : 0))
+        });
+    }
+
+    render() {
+        return (
+            <div className="app">
+                <div className="center">
+                    <div className="toolbar">
+                        <button onClick={() => this.getUsers()} className="toolbar__button">Get New Users</button>
+                        <input type="text" name="search" className="toolbar__search" placeholder="Search users" />
+                        <button onClick={() => this.sortAscend()} className="toolbar__button">A–Z</button>
+                        <button onClick={() => this.sortDescend()} className="toolbar__button">Z–A</button>
+                    </div>
+                </div>
+                <div className="grid">
+                    {this.state.results.map(user => {
+                        return <Card
+                            key={user.login.uuid}
+                            name={user.name.first + ' ' + user.name.last}
+                            thumbnail={user.picture.large}
+                            email={user.email}
+                            phone={user.phone}
+                            location={user.location.city + ', ' + user.location.state}
+                        />
+                    })}
+                </div>
+            </div>
+        );
+    }
 }
 
 export default App;
