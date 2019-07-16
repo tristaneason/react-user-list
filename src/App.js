@@ -9,7 +9,8 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            results: []
+            results: [],
+            filteredResults: []
         }
     }
 
@@ -37,13 +38,26 @@ class App extends Component {
         });
     }
 
+    filterUsers(e) {
+        let filteredResults = this.state.results;
+        filteredResults = filteredResults.filter(user => {
+            return user.name.last.toLowerCase().search(e.target.value.toLowerCase()) !== -1;
+        });
+        this.setState({ results: filteredResults });
+    }
+
     render() {
         return (
             <div className="app">
                 <div className="center">
                     <div className="toolbar">
                         <button onClick={() => this.getUsers()} className="toolbar__button">Get New Users</button>
-                        <input type="text" name="search" className="toolbar__search" placeholder="Search users" />
+                        <input
+                            type="text"
+                            name="search"
+                            className="toolbar__search"
+                            placeholder="Search users"
+                            onChange={this.filterUsers.bind(this)} />
                         <button onClick={() => this.sortAscend()} className="toolbar__button">A–Z</button>
                         <button onClick={() => this.sortDescend()} className="toolbar__button">Z–A</button>
                     </div>
