@@ -10,11 +10,13 @@ class App extends Component {
         super();
         this.state = {
             results: [],
-            filteredResults: []
+            filteredResults: [],
+            editUserClicked: false
         }
     }
 
     getUsers() {
+        // Request users and set state
         axios(requestOptions)
             .then(response => {
                 this.setState({
@@ -29,23 +31,30 @@ class App extends Component {
     }
 
     sortAscend() {
+        // Use sort() to compare first instance of last name to the next instance
         this.setState({
-            results: this.state.results.sort((a, b) => (a.name.last > b.name.last) ? 1 : ((b.name.last > a.name.last) ? -1 : 0))
+            results: this.state.filteredResults.sort((a, b) => (a.name.last > b.name.last) ? 1 : ((b.name.last > a.name.last) ? -1 : 0))
         });
     }
 
     sortDescend() {
+        // Use sort() to compare first instance of last name to the next instance
         this.setState({
-            results: this.state.results.sort((a, b) => (a.name.last < b.name.last) ? 1 : ((b.name.last < a.name.last) ? -1 : 0))
+            results: this.state.filteredResults.sort((a, b) => (a.name.last < b.name.last) ? 1 : ((b.name.last < a.name.last) ? -1 : 0))
         });
     }
 
     filterUsers(e) {
+        // Set variable to state.results, filter via lowercasing, and setting state with returned value
         let filteredResults = this.state.results;
         filteredResults = filteredResults.filter(user => {
             return user.name.last.toLowerCase().search(e.target.value.toLowerCase()) !== -1;
         });
         this.setState({ filteredResults: filteredResults });
+    }
+
+    editUser() {
+        this.setState(prevState => ({ editUserClicked: !prevState.editUserClicked }));
     }
 
     render() {
@@ -65,7 +74,6 @@ class App extends Component {
                     </div>
                 </div>
                 <div className="grid">
-
                     {this.state.filteredResults.map(user => {
                         return <Card
                             key={user.login.uuid}
@@ -74,6 +82,8 @@ class App extends Component {
                             email={user.email}
                             phone={user.phone}
                             location={user.location.city + ', ' + user.location.state}
+                            editUser={this.editUser.bind(this)}
+                            editUserClicked={this.state.editUserClicked}
                         />
                     })}
                 </div>
