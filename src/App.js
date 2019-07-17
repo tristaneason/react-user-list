@@ -17,8 +17,10 @@ class App extends Component {
     getUsers() {
         axios(requestOptions)
             .then(response => {
-                console.log(response.data.results);
-                this.setState({ results: response.data.results });
+                this.setState({
+                    results: response.data.results,
+                    filteredResults: response.data.results
+                });
                 console.log(this.state);
             })
             .catch(error => {
@@ -43,7 +45,7 @@ class App extends Component {
         filteredResults = filteredResults.filter(user => {
             return user.name.last.toLowerCase().search(e.target.value.toLowerCase()) !== -1;
         });
-        this.setState({ results: filteredResults });
+        this.setState({ filteredResults: filteredResults });
     }
 
     render() {
@@ -51,19 +53,20 @@ class App extends Component {
             <div className="app">
                 <div className="center">
                     <div className="toolbar">
-                        <button onClick={() => this.getUsers()} className="toolbar__button">Get New Users</button>
+                        <button onClick={this.getUsers.bind(this)} className="toolbar__button">Get New Users</button>
                         <input
                             type="text"
                             name="search"
                             className="toolbar__search"
-                            placeholder="Search users"
+                            placeholder="Search by last name"
                             onChange={this.filterUsers.bind(this)} />
-                        <button onClick={() => this.sortAscend()} className="toolbar__button">A–Z</button>
-                        <button onClick={() => this.sortDescend()} className="toolbar__button">Z–A</button>
+                        <button onClick={this.sortAscend.bind(this)} className="toolbar__button">A–Z</button>
+                        <button onClick={this.sortDescend.bind(this)} className="toolbar__button">Z–A</button>
                     </div>
                 </div>
                 <div className="grid">
-                    {this.state.results.map(user => {
+
+                    {this.state.filteredResults.map(user => {
                         return <Card
                             key={user.login.uuid}
                             name={user.name.first + ' ' + user.name.last}
