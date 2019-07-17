@@ -10,8 +10,7 @@ class App extends Component {
         super();
         this.state = {
             results: [],
-            filteredResults: [],
-            editUserClicked: false
+            filteredResults: []
         }
     }
 
@@ -23,7 +22,6 @@ class App extends Component {
                     results: response.data.results,
                     filteredResults: response.data.results
                 });
-                console.log(this.state);
             })
             .catch(error => {
                 console.error(error);
@@ -53,10 +51,6 @@ class App extends Component {
         this.setState({ filteredResults: filteredResults });
     }
 
-    editUser() {
-        this.setState(prevState => ({ editUserClicked: !prevState.editUserClicked }));
-    }
-
     render() {
         return (
             <div className="app">
@@ -82,8 +76,6 @@ class App extends Component {
                             email={user.email}
                             phone={user.phone}
                             location={user.location.city + ', ' + user.location.state}
-                            editUser={this.editUser.bind(this)}
-                            editUserClicked={this.state.editUserClicked}
                         />
                     })}
                 </div>
